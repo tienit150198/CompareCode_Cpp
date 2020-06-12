@@ -253,10 +253,10 @@ public class ManagerAnalyzeText {
 					String key = entryCout.getKey();
 					String value = entryCout.getValue();
 					if (!key.equals("") && !value.equals("")) {
-						String newSyntax = "cout <<";
+						String newSyntax = "cout";
 						if (key.equals("printf")) {
 							String textCout = value.substring(0, value.lastIndexOf('\"') + 1);
-							newSyntax += textCout;
+							newSyntax += "<<" + textCout;
 							if (value.length() > (value.lastIndexOf('\"') + 2)) {
 								String variableCout = value.substring(value.lastIndexOf('\"') + 2);
 
@@ -265,13 +265,30 @@ public class ManagerAnalyzeText {
 								String beginCout = "\"<<";
 								String endCout = "<<\"";
 								for (String variable : variableCouts) {
-									newSyntax = newSyntax.replaceFirst("%.{1,3}", beginCout + variable + endCout);
+									if (!variable.trim().equals("")) {
+										String[] splitsVariable = newSyntax.split("%");
+
+										if (splitsVariable.length > 1) {
+
+											String regexReplaceVariable = "%.{1," + splitsVariable[1].length() + "}";
+											String valueReplace = "\"<<" + variable;
+											
+//											String tempSyntax = newSyntax.replaceFirst(regexReplaceVariable, valueReplace);
+											
+											if(newSyntax.replaceFirst(regexReplaceVariable, valueReplace).contains("%")) {
+												valueReplace += "\"";
+											}
+											
+											newSyntax = newSyntax.replaceFirst(regexReplaceVariable, valueReplace);
+										}
+//										newSyntax = newSyntax.replaceFirst("%.{1,3}", beginCout + variable + endCout);
+									}
 								}
 							}
 							newSyntax += ";";
 
 						} else {
-							newSyntax += (value + ";");
+							newSyntax += ("<< " + value + ";");
 						}
 						listTemp.set(index, newSyntax);
 					}
@@ -296,14 +313,16 @@ public class ManagerAnalyzeText {
 								String variableCouts[] = variableCout.trim().split(",");
 
 								for (String variable : variableCouts) {
-									variable = variable.replace("&", "");
-									// %.{1,3}
-									String[] splitsVariable = newSyntax.split("%");
-									
-									if(splitsVariable.length > 1) {
-										
-										String regexReplaceVariable = "%.{1," + splitsVariable[1].length() + "}";
-										newSyntax = newSyntax.replaceFirst(regexReplaceVariable, ">>" + variable);
+									if (!variable.trim().equals("")) {
+										variable = variable.replace("&", "");
+										// %.{1,3}
+										String[] splitsVariable = newSyntax.split("%");
+
+										if (splitsVariable.length > 1) {
+
+											String regexReplaceVariable = "%.{1," + splitsVariable[1].length() + "}";
+											newSyntax = newSyntax.replaceFirst(regexReplaceVariable, ">>" + variable);
+										}
 									}
 								}
 							}
@@ -707,6 +726,7 @@ public class ManagerAnalyzeText {
 
 		for (String code : isList) {
 			code = code.replaceAll("\\?", "");
+			code = code.replaceAll("\\\\n", "");
 			if (isDigitSpecial(code)) {
 				Pattern pattern = Pattern.compile(regex);
 				Matcher matcher = pattern.matcher(code);

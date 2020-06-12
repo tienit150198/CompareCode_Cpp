@@ -73,15 +73,21 @@ public class ManagerCodeSystem implements Callable<CodeInformation> {
 	@Override
 	public CodeInformation call() throws Exception {
 		synchronized (this) {
+			// save origin code
 			codeStep.add(Utility.convertListToString_default(codeInfo.getListCode()));
+			// format code
 			actionFormatCode();
 			actionReplaceSpaceAfterLetterEqual();
+			// replace all define to code
 			actionReplaceDefineToCode();
+			// format all variable 
 			actionFormatVariable();
+			// merge child function to main function
 			actionIgnoreFunction();
 //			ManagerAnalyzeText.getInstance().mergeFunctionIntoMain(codeInfo.getListCode());
 			/*----*/
 			
+			// igonre special character
 			actionIgnoreDigitSpecial();
 			if(codeInfo.getStepCode() == null)
 				codeInfo.setStepCode(codeStep);
