@@ -1,0 +1,6 @@
+double->(long double|double long|double int|float float|float|double double|double)
+int->(long long int|long int long|int long long|long int|int long|long long|long|int int|int)
+bool->(bool)
+char->(char)
+string->(string)
+void->(void)

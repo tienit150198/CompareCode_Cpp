@@ -1,0 +1,7 @@
+forName-->com.mysql.cj.jdbc.Driver
+-- dbURL-->jdbc:sqlserver://localhost:1433; databaseName =CrawlData 
+server-->jdbc:mysql
+host-->localhost
+database--> 
+userName-->root
+password-->123456a
